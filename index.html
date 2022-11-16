@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | OneStrokeWriting</title>
+    <script src="https://ad-img.gesoten.com/app/js/gamebox.iframe.js?v =1.5"></script>
+    <script src="Build/GameSettings.jslib"></script>
+</head>
+<body style="text-align: center">
+    <canvas id="unity-canvas" width=600 height=604 style="width: 600px; height: 604px; background: #231F20"></canvas>
+    <script src="Build/GMOCallTest.loader.js"></script>
+    <script>
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            // Mobile device style: fill the whole browser client area with the game canvas:
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+        }
+        var unityInstance = null;
+        createUnityInstance(document.querySelector("#unity-canvas"), {
+            dataUrl: "Build/GMOCallTest.data.unityweb",
+            frameworkUrl: "Build/GMOCallTest.framework.js.unityweb",
+            codeUrl: "Build/GMOCallTest.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "akahoshiKaito",
+            productName: "OneStrokeWriting",
+            productVersion: "1.0",
+        }).then(x => unityInstance = x);
+    </script>
+    <script>
+        ///ゲーム接続
+        function unitySendMessage(ObjName, FunctionName, Val, params) {
+            if (Val == null) {
+                unityInstance.SendMessage(ObjName, FunctionName);
+            }
+            else {
+                unityInstance.SendMessage(ObjName, FunctionName,Val);
+            }
+        }
+        ///ゲーム開始処理
+        function C_CallBackStart() {
+            CallBackStart(unitySendMessage("Connect","GameStart"));
+        }
+        ///ゲーム終了処理
+        function C_CallBackEnd(game_score) {
+            CallBackEnd(unitySendMessage("Connect", "GameStart", game_score));
+        }
+        ///広告視聴完了
+        function C_CallBackShowReward() {
+            CallBackShowReward(unitySendMessage("Connect", "GameStart"));
+        }
+        ///広告視聴不完了
+        function C_CallBackFailShowReward() {
+            CallBackFailShowReward(unitySendMessage("Connect", "GameStart"));
+        }
+        ///データ同期
+        function C_CallBackSave(game_total_score) {
+            CallBackSave(unitySendMessage("Connect", "Save", game_total_score));
+        }
+    </script>
+</body>
+</html>
